@@ -42,11 +42,11 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { name, email } = req.body;
+  const { username, email } = req.body;
   try {
     const results = await pool.query(
-      "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id",
-      [name, email]
+      "INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id",
+      [username, email]
     );
     res.status(201).json({ message: "User added", id: results.rows[0].id });
   } catch (err) {
@@ -56,11 +56,11 @@ const createUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
   const id = parseInt(req.params.id);
-  const { name, email } = req.body;
+  const { username, email } = req.body;
   try {
     const results = await pool.query(
-      "UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING id",
-      [name, email, id]
+      "UPDATE users SET username=$1, email=$2 WHERE id=$3 RETURNING id",
+      [username, email, id]
     );
     res.status(201).json({ message: "User updated", id: results.rows[0].id });
   } catch (err) {
