@@ -22,75 +22,63 @@ const pool = new Pool({
   port: process.env.PGPORT,
 });
 
-const getUsers = (req, res) => {
-  pool.query("SELECT * FROM users ORDER BY id ASC", (err, results) => {
-    try {
-      res.status(200).json(results.rows);
-    } catch (err) {
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
+const getUsers = async (req, res) => {
+  try {
+    const results = await pool.query("SELECT * FROM users ORDER BY id ASC");
+    res.status(200).json(results.rows);
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-const getUserById = (req, res) => {
+const getUserById = async (req, res) => {
   const id = parseInt(req.params.id);
-  pool.query("SELECT * FROM users WHERE id = $1", [id], (err, results) => {
-    try {
-      res.status(200).json(results.rows);
-    } catch (err) {
-      res.status(500).json({ error: "Internal Server Error" });
-    }
-  });
+  try {
+    const results = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    res.status(200).json(results.rows);
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-const createUser = (req, res) => {
+const createUser = async (req, res) => {
   const { name, email } = req.body;
-  pool.query(
-    "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id",
-    [name, email],
-    (err, results) => {
-      try {
-        res.status(201).json({ message: "User added", id: results.rows[0].id });
-      } catch (err) {
-        res.status(500).json({ error: "Internal Server Error" });
-      }
-    }
-  );
+  try {
+    const results = await pool.query(
+      "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id",
+      [name, email]
+    );
+    res.status(201).json({ message: "User added", id: results.rows[0].id });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-const updateUser = (req, res) => {
+const updateUser = async (req, res) => {
   const id = parseInt(req.params.id);
   const { name, email } = req.body;
-  pool.query(
-    "UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING id",
-    [name, email, id],
-    (err, results) => {
-      try {
-        res
-          .status(201)
-          .json({ message: "User updated", id: results.rows[0].id });
-      } catch (err) {
-        res.status(500).json({ error: "Internal Server Error" });
-      }
-    }
-  );
+  try {
+    const results = await pool.query(
+      "UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING id",
+      [name, email, id]
+    );
+    res.status(201).json({ message: "User updated", id: results.rows[0].id });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
-const deleteUser = (req, res) => {
+const deleteUser = async (req, res) => {
   const id = parseInt(req.params.id);
-  pool.query(
-    "DELETE FROM users WHERE id=$1 RETURNING id",
-    [id],
-    (err, results) => {
-      try {
-        res
-          .status(200)
-          .json({ message: "User deleted", id: results.rows[0].id });
-      } catch (err) {
-        res.status(500).json({ error: "Internal Server Error" });
-      }
-    }
-  );
+  try {
+    const results = await pool.query(
+      "DELETE FROM users WHERE id=$1 RETURNING id",
+      [id]
+    );
+    res.status(200).json({ message: "User deleted", id: results.rows[0].id });
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 app.route("/users").get(getUsers).post(createUser);
