@@ -24,20 +24,22 @@ const pool = new Pool({
 
 const getUsers = (req, res) => {
   pool.query("SELECT * FROM users ORDER BY id ASC", (err, results) => {
-    if (err) {
-      throw err;
+    try {
+      res.status(200).json(results.rows);
+    } catch (err) {
+      res.status(500).json({ error: "Internal Server Error" });
     }
-    res.status(200).json(results.rows);
   });
 };
 
 const getUserById = (req, res) => {
   const id = parseInt(req.params.id);
   pool.query("SELECT * FROM users WHERE id = $1", [id], (err, results) => {
-    if (err) {
-      throw err;
+    try {
+      res.status(200).json(results.rows);
+    } catch (err) {
+      res.status(500).json({ error: "Internal Server Error" });
     }
-    res.status(200).json(results.rows);
   });
 };
 
@@ -47,10 +49,11 @@ const createUser = (req, res) => {
     "INSERT INTO users (name, email) VALUES ($1, $2) RETURNING id",
     [name, email],
     (err, results) => {
-      if (err) {
-        throw err;
+      try {
+        res.status(201).json({ message: "User added", id: results.rows[0].id });
+      } catch (err) {
+        res.status(500).json({ error: "Internal Server Error" });
       }
-      res.status(201).json({ message: "User added", id: results.rows[0].id });
     }
   );
 };
@@ -62,10 +65,13 @@ const updateUser = (req, res) => {
     "UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING id",
     [name, email, id],
     (err, results) => {
-      if (err) {
-        throw err;
+      try {
+        res
+          .status(201)
+          .json({ message: "User updated", id: results.rows[0].id });
+      } catch (err) {
+        res.status(500).json({ error: "Internal Server Error" });
       }
-      res.status(201).json({ message: "User updated", id: results.rows[0].id });
     }
   );
 };
@@ -76,10 +82,13 @@ const deleteUser = (req, res) => {
     "DELETE FROM users WHERE id=$1 RETURNING id",
     [id],
     (err, results) => {
-      if (err) {
-        throw err;
+      try {
+        res
+          .status(200)
+          .json({ message: "User deleted", id: results.rows[0].id });
+      } catch (err) {
+        res.status(500).json({ error: "Internal Server Error" });
       }
-      res.status(200).json({ message: "User deleted", id: results.rows[0].id });
     }
   );
 };
