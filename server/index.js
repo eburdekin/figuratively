@@ -1,5 +1,5 @@
 import express from "express";
-import pkg from "pg";
+import prisma from "./prisma.js";
 import "dotenv/config";
 
 const app = express();
@@ -12,29 +12,26 @@ app.use(
   })
 );
 
-const { Pool } = pkg;
-
-const pool = new Pool({
-  user: process.env.PGUSER,
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  // password: process.env.PGPASSWORD,
-  port: process.env.PGPORT,
-});
-
 const getUsers = async (req, res) => {
   try {
-    const results = await pool.query("SELECT * FROM users ORDER BY id ASC");
-    res.status(200).json(results.rows);
+    // const results = await pool.query("SELECT * FROM users ORDER BY id ASC");
+    const results = await prisma.user.findMany();
+    res.status(200).json(results);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 const getUserById = async (req, res) => {
-  const id = parseInt(req.params.id);
+  // const id = parseInt(req.params.id);
   try {
-    const results = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    // const results = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
+    const results = await prisma.user.findUnique({
+      where: { id: parseInt(req.params.id) },
+    });
+    if (!results) {
+      res.status(404).json({ error: "User not found" });
+    }
     res.status(200).json(results.rows);
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
@@ -42,40 +39,61 @@ const getUserById = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { username, email } = req.body;
+  // const { username, email } = req.body;
   try {
-    const results = await pool.query(
-      "INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id",
-      [username, email]
-    );
-    res.status(201).json({ message: "User added", id: results.rows[0].id });
+    // const results = await pool.query(
+    //   "INSERT INTO users (username, email) VALUES ($1, $2) RETURNING id",
+    //   [username, email]
+    // );
+    const newUser = await prisma.user.create({
+      data: {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+      },
+    });
+    res.status(201).json({ message: "User added", id: newUser.id });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 const updateUser = async (req, res) => {
-  const id = parseInt(req.params.id);
-  const { username, email } = req.body;
+  // const id = parseInt(req.params.id);
+  // const { username, email } = req.body;
   try {
-    const results = await pool.query(
-      "UPDATE users SET username=$1, email=$2 WHERE id=$3 RETURNING id",
-      [username, email, id]
-    );
-    res.status(201).json({ message: "User updated", id: results.rows[0].id });
+    // const results = await pool.query(
+    //   "UPDATE users SET username=$1, email=$2 WHERE id=$3 RETURNING id",
+    //   [username, email, id]
+    // );
+    const updatedUser = await prisma.user.update({
+      where: { id: parseInt(req.params.id) },
+      data: {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+      },
+    });
+    res.status(201).json({ message: "User updated", id: updatedUser.id });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
 const deleteUser = async (req, res) => {
-  const id = parseInt(req.params.id);
+  // const id = parseInt(req.params.id);
   try {
-    const results = await pool.query(
-      "DELETE FROM users WHERE id=$1 RETURNING id",
-      [id]
-    );
-    res.status(200).json({ message: "User deleted", id: results.rows[0].id });
+    // const results = await pool.query(
+    //   "DELETE FROM users WHERE id=$1 RETURNING id",
+    //   [id]
+    // );
+    const deletedUser = await prisma.user.delete({
+      where: { id: parseInt(req.params.id) },
+    });
+    if (!deletedUser) {
+      res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json({ message: "User deleted", id: deletedUser.id });
   } catch (err) {
     res.status(500).json({ error: "Internal Server Error" });
   }
