@@ -18,6 +18,7 @@ model User {
   email String @unique
   password String
   refreshTokens RefreshToken[]
+  sessions    Session[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
 }
@@ -31,4 +32,36 @@ model RefreshToken {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   expireAt    DateTime
+}
+
+model Session {
+  id           String     @id @unique @default(uuid())
+  user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+  imageType    ImageType
+  imageCount   Int
+  timePerImage Int
+  startTime    DateTime
+  endTime      DateTime?
+  sessionNotes String?
+  images       SessionImage[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model SessionImage {
+  id          String     @id @unique @default(uuid())
+  session     Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   String
+  imageUrl    String
+  drawingUrl  String?
+  createdAt   DateTime   @default(now())
+}
+
+enum ImageType {
+  POSES
+  HANDS
+  FACES
+  ANIMALS
+  CUSTOM
 }
