@@ -1,4 +1,4 @@
-import { AppShell, Burger, NavLink, ScrollArea } from "@mantine/core";
+import { AppShell, Burger, NavLink, Title, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Outlet } from "react-router";
 
@@ -17,7 +17,7 @@ const Layout = () => {
     >
       <AppShell.Header>
         <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-        Figuratively
+        <Title order={1}>Figuratively</Title>
       </AppShell.Header>
 
       <AppShell.Navbar p="md">
@@ -29,9 +29,9 @@ const Layout = () => {
       </AppShell.Navbar>
 
       <AppShell.Main>
-        <ScrollArea>
-          <Outlet />
-        </ScrollArea>
+        {/* <ScrollArea h="100vh"> */}
+        <Outlet />
+        {/* </ScrollArea> */}
       </AppShell.Main>
       <AppShell.Footer>Footer</AppShell.Footer>
     </AppShell>
