@@ -6,8 +6,11 @@ import "@mantine/core/styles.css";
 import { createTheme, MantineProvider } from "@mantine/core";
 import Home from "./pages/Home.jsx";
 import Layout from "./components/Layout.jsx";
+import TimedSessionOptions from "./pages/TimedSessionOptions.jsx";
 import TimedSession from "./pages/TimedSession.jsx";
 import RandomPoses from "./pages/RandomPoses.jsx";
+
+import { SessionOptionsProvider } from "./contexts/SessionOptionsContext";
 
 const theme = createTheme({
   /** Put your mantine theme override here */
@@ -15,16 +18,22 @@ const theme = createTheme({
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <MantineProvider theme={theme}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="timed-session" element={<TimedSession />} />
-            <Route path="random-poses" element={<RandomPoses />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </MantineProvider>
+    <SessionOptionsProvider>
+      <MantineProvider theme={theme}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route
+                path="timed-session-options"
+                element={<TimedSessionOptions />}
+              />
+              <Route path="timed-session" element={<TimedSession />} />
+              {/* <Route path="random-poses" element={<RandomPoses />} /> */}
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </MantineProvider>
+    </SessionOptionsProvider>
   </StrictMode>
 );
