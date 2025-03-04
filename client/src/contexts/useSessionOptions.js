@@ -1,14 +1,6 @@
 import { useContext } from "react";
 import SessionOptionsContext from "./SessionOptionsContext";
 
-const useSessionOptions = () => {
-  const context = useContext(SessionOptionsContext);
-  if (!context) {
-    throw new Error(
-      "useSessionOptions must be used within a SessionOptionsProvider"
-    );
-  }
-  return context;
-};
+const useSessionOptions = () => useContext(SessionOptionsContext);
 
 export default useSessionOptions;
