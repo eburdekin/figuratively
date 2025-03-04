@@ -1,11 +1,24 @@
 import useSessionOptions from "../contexts/useSessionOptions";
+import { useNavigate } from "react-router-dom";
+import { Title, Group, Button } from "@mantine/core";
 
 const TimedSession = () => {
   const { selections } = useSessionOptions();
+  const navigate = useNavigate();
 
   return (
     <div>
-      <h2>Session Settings</h2>
+      <Title order={2}>Timed Session</Title>
+      <Group>
+        <Button>Pause</Button> <Button>Skip</Button>
+        <Button
+          onClick={() => {
+            navigate("/timed-session/review");
+          }}
+        >
+          End Session
+        </Button>
+      </Group>
       <p>Subject: {selections.subject}</p>
       <p>Gender: {selections.gender}</p>
       <p>Clothing: {selections.clothing}</p>

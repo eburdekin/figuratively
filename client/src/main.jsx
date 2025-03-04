@@ -8,7 +8,9 @@ import Home from "./pages/Home.jsx";
 import Layout from "./components/Layout.jsx";
 import TimedSessionOptions from "./pages/TimedSessionOptions.jsx";
 import TimedSession from "./pages/TimedSession.jsx";
+import TimedSessionReview from "./pages/TimedSessionReview.jsx";
 import RandomPoses from "./pages/RandomPoses.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 import { SessionOptionsProvider } from "./contexts/SessionOptionsContext";
 
@@ -25,11 +27,16 @@ createRoot(document.getElementById("root")).render(
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
               <Route
-                path="timed-session-options"
+                path="timed-session/options"
                 element={<TimedSessionOptions />}
               />
               <Route path="timed-session" element={<TimedSession />} />
+              <Route
+                path="timed-session/review"
+                element={<TimedSessionReview />}
+              />
               {/* <Route path="random-poses" element={<RandomPoses />} /> */}
+              <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
         </BrowserRouter>
