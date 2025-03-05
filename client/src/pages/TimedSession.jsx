@@ -10,7 +10,7 @@ const TimedSession = () => {
     <div>
       <Title order={2}>Timed Session</Title>
       <Group>
-        <Button>Pause</Button> <Button>Skip</Button>
+        <Button>Pause Session</Button>
         <Button
           onClick={() => {
             navigate("/timed-session/review");
@@ -18,6 +18,8 @@ const TimedSession = () => {
         >
           End Session
         </Button>
+        Image
+        <Button>Skip</Button>
       </Group>
       <p>Subject: {selections.subject}</p>
       <p>Gender: {selections.gender}</p>

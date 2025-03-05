@@ -1,8 +1,11 @@
 import express from "express";
+import cors from "cors";
 // import prisma from "./config/prisma.js";
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import sessionRoutes from "./routes/sessionRoutes.js";
+import imageRoutes from "./routes/imageRoutes.js";
 
 const app = express();
 const port = 3000;
@@ -11,6 +14,26 @@ app.use(express.json());
 app.use(
   express.urlencoded({
     extended: true,
+  })
+);
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  // "https://yourfrontenddomain.com",
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // Allow cookies and authorization headers
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
@@ -105,8 +128,10 @@ app.use(
 
 // app.route("/users/:id").get(getUserById).put(updateUser).delete(deleteUser);
 
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/sessions", sessionRoutes);
+app.use("/api/images", imageRoutes);
 
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

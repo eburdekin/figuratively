@@ -38,7 +38,9 @@ model Session {
   id           String     @id @unique @default(uuid())
   user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId       String
-  imageType    ImageType
+  imageSubject   ImageSubject
+  imageGender   ImageGender 
+  imageClothing   ImageClothing
   imageCount   Int
   timePerImage Int
   startTime    DateTime
@@ -49,19 +51,37 @@ model Session {
   updatedAt    DateTime   @updatedAt
 }
 
-model SessionImage {
+model Image {
   id          String     @id @unique @default(uuid())
-  session     Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId   String
-  imageUrl    String
-  drawingUrl  String?
+  sessions    SessionImage[]
+  imageSubject   ImageSubject
+  imageGender   ImageGender 
+  imageClothing   ImageClothing
+  imageUrl    String @unique
   createdAt   DateTime   @default(now())
 }
 
-enum ImageType {
-  POSES
+model SessionImage {
+  sessionId String
+  imageId   String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  image     Image   @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@id([sessionId, imageId])
+}
+
+enum ImageSubject {
+  FIGURE
+  FACE
   HANDS
-  FACES
-  ANIMALS
-  CUSTOM
+}
+
+enum ImageGender {
+  MALE
+  FEMALE
+}
+
+enum ImageClothing {
+  NUDE
+  CLOTHED
 }

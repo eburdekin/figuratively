@@ -10,6 +10,7 @@ import TimedSessionOptions from "./pages/TimedSessionOptions.jsx";
 import TimedSession from "./pages/TimedSession.jsx";
 import TimedSessionReview from "./pages/TimedSessionReview.jsx";
 import RandomPoses from "./pages/RandomPoses.jsx";
+import ImageGallery from "./pages/ImageGallery.jsx";
 import NotFound from "./pages/NotFound.jsx";
 
 import { SessionOptionsProvider } from "./contexts/SessionOptionsContext";
@@ -26,6 +27,7 @@ createRoot(document.getElementById("root")).render(
           <Routes>
             <Route path="/" element={<Layout />}>
               <Route index element={<Home />} />
+              <Route path="gallery" element={<ImageGallery />} />
               <Route
                 path="timed-session/options"
                 element={<TimedSessionOptions />}

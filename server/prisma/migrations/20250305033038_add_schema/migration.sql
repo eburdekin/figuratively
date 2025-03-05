@@ -1,5 +1,11 @@
 -- CreateEnum
-CREATE TYPE "ImageType" AS ENUM ('POSES', 'HANDS', 'FACES', 'ANIMALS', 'CUSTOM');
+CREATE TYPE "ImageSubject" AS ENUM ('FIGURE', 'FACE', 'HANDS');
+
+-- CreateEnum
+CREATE TYPE "ImageGender" AS ENUM ('MALE', 'FEMALE');
+
+-- CreateEnum
+CREATE TYPE "ImageClothing" AS ENUM ('NUDE', 'CLOTHED');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -29,7 +35,9 @@ CREATE TABLE "RefreshToken" (
 CREATE TABLE "Session" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "imageType" "ImageType" NOT NULL,
+    "imageSubject" "ImageSubject" NOT NULL,
+    "imageGender" "ImageGender" NOT NULL,
+    "imageClothing" "ImageClothing" NOT NULL,
     "imageCount" INTEGER NOT NULL,
     "timePerImage" INTEGER NOT NULL,
     "startTime" TIMESTAMP(3) NOT NULL,
@@ -42,14 +50,23 @@ CREATE TABLE "Session" (
 );
 
 -- CreateTable
-CREATE TABLE "SessionImage" (
+CREATE TABLE "Image" (
     "id" TEXT NOT NULL,
-    "sessionId" TEXT NOT NULL,
+    "imageSubject" "ImageSubject" NOT NULL,
+    "imageGender" "ImageGender" NOT NULL,
+    "imageClothing" "ImageClothing" NOT NULL,
     "imageUrl" TEXT NOT NULL,
-    "drawingUrl" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "SessionImage_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Image_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "SessionImage" (
+    "sessionId" TEXT NOT NULL,
+    "imageId" TEXT NOT NULL,
+
+    CONSTRAINT "SessionImage_pkey" PRIMARY KEY ("sessionId","imageId")
 );
 
 -- CreateIndex
@@ -68,7 +85,10 @@ CREATE UNIQUE INDEX "RefreshToken_hashedToken_key" ON "RefreshToken"("hashedToke
 CREATE UNIQUE INDEX "Session_id_key" ON "Session"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "SessionImage_id_key" ON "SessionImage"("id");
+CREATE UNIQUE INDEX "Image_id_key" ON "Image"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Image_imageUrl_key" ON "Image"("imageUrl");
 
 -- AddForeignKey
 ALTER TABLE "RefreshToken" ADD CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -78,3 +98,6 @@ ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId"
 
 -- AddForeignKey
 ALTER TABLE "SessionImage" ADD CONSTRAINT "SessionImage_sessionId_fkey" FOREIGN KEY ("sessionId") REFERENCES "Session"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SessionImage" ADD CONSTRAINT "SessionImage_imageId_fkey" FOREIGN KEY ("imageId") REFERENCES "Image"("id") ON DELETE CASCADE ON UPDATE CASCADE;
